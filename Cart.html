@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Shopping cart of Li Doces e Salgados">
+    <title>Li Doces e Salgados - Cart</title>
+     <link rel="icon" type="image/png" href="logo.jpg">
+    <style>
+        :root {
+            --primary-color: #ff6f61;
+            --secondary-color: #ffa07a;
+            --text-color: #333;
+            --light-text: #fff;
+            --background: #fffaf0;
+            --card-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            --hover-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background);
+            padding: 20px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 20px;
+        }
+
+        .navbar-brand a {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar-menu {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .navbar-menu li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-menu li a:hover {
+            color: var(--primary-color);
+        }
+
+        .navbar-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .navbar-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-menu li a.active {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-toggle {
+                display: flex;
+            }
+
+            .navbar-menu {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background-color: white;
+                box-shadow: var(--card-shadow);
+                padding: 20px;
+                border-radius: 0 0 10px 10px;
+                z-index: 1000;
+            }
+
+            .navbar-menu.active {
+                display: flex;
+            }
+
+            .navbar-menu li {
+                margin: 10px 0;
+            }
+
+            .navbar-toggle.active span:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 5px);
+            }
+
+            .navbar-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .navbar-toggle.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(7px, -7px);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .cart-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .cart-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .cart-list {
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-details h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-details p {
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-item-quantity input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .cart-item-quantity button {
+            padding: 5px 10px;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .cart-item-quantity button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .cart-item-remove:hover {
+            color: var(--secondary-color);
+        }
+
+        .cart-total {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .cart-empty {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .cart-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .cart-actions a, .cart-actions button {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .cart-actions .continue-shopping {
+            background-color: #ccc;
+            color: var(--text-color);
+        }
+
+        .cart-actions .continue-shopping:hover {
+            background-color: #bbb;
+            transform: translateY(-2px);
+        }
+
+        .cart-actions .proceed-to-checkout {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cart-actions .proceed-to-checkout:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 40px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 0;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .cart-container {
+                padding: 15px;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .cart-item-quantity {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .cart-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cart-container h2 {
+                font-size: 1.5rem;
+            }
+
+            .cart-item-details h3 {
+                font-size: 1.1rem;
+            }
+
+            .cart-item-quantity input {
+                width: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+         <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="principal.en.html">Li Doces e Salgados</a>
+        </div>
+        <div class="navbar-toggle" id="navbarToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="navbar-menu" id="navbarMenu">
+            <li><a href="principal.en.html" class="nav-link">Home</a></li>
+            <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+            <li><a href="products.html" class="nav-link">Products</a></li>
+            <li><a href="cart.html" class="nav-link">Cart</a></li>
+            <li><a href="orders.html" class="nav-link">Place Order</a></li>
+            <li><a href="Carrinho.html" class="nav-link">PT</a></li>
+        </ul>
+    </nav>
+
+    <div class="header">
+        <h1>Li Doces e Salgados</h1>
+        <p>Your shopping cart</p>
+    </div>
+
+    <div class="cart-container">
+        <h2>Cart</h2>
+        <div class="cart-list" id="cartList"></div>
+        <div class="cart-total" id="cartTotal"></div>
+        <div class="cart-actions">
+            <a href="principal.en.html" class="continue-shopping">Continue Shopping</a>
+            <button class="proceed-to-checkout" onclick="proceedToCheckout()">Checkout</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Li Doces e Salgados - All rights reserved.</p>
+    </footer>
+
+    <script>
+        const products = [
+            { title: 'Coxinha de Frango', category: 'salgados', price: 2.50 },
+            { title: 'Rissóis de Frango', category: 'salgados', price: 2.00 },
+            { title: 'Bolinha de Queijo', category: 'salgados', price: 1.80 },
+            { title: 'Brigadeiro', category: 'doces', price: 1.50 },
+            { title: 'Beijinho', category: 'doces', price: 1.50 },
+            { title: 'Leite Ninho', category: 'doces', price: 2.00 },
+            { title: 'Brigadeiro de Nesquik', category: 'doces', price: 1.80 }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCart();
+            setupNavbar();
+        });
+
+        function updateCart() {
+            const cartList = document.getElementById('cartList');
+            const cartTotal = document.getElementById('cartTotal');
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            cartList.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                cartList.innerHTML = '<p class="cart-empty">Seu carrinho está vazio.</p>';
+                cartTotal.innerHTML = '';
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                const product = products.find(p => p.title === item.product);
+                if (!product) return;
+
+                const itemTotal = product.price * item.quantity;
+                total += itemTotal;
+
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="cart-item-details">
+                        <h3>${item.product}</h3>
+                        <p>€${product.price.toFixed(2)} por unidade</p>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button onclick="updateQuantity(${index}, -1)">−</button>
+                        <input type="number" min="1" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)">
+                        <button onclick="updateQuantity(${index}, 1)">+</button>
+                    </div>
+                    <button class="cart-item-remove" onclick="removeFromCart(${index})" aria-label="Remover ${item.product}">✕</button>
+                `;
+                cartList.appendChild(cartItem);
+            });
+
+            cartTotal.innerHTML = `Total: €${total.toFixed(2)}`;
+        }
+
+        function updateQuantity(index, value) {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (typeof value === 'number') {
+                cart[index].quantity = Math.max(1, cart[index].quantity + value);
+            } else {
+                const newQuantity = parseInt(value);
+                if (newQuantity >= 1) cart[index].quantity = newQuantity;
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        function removeFromCart(index) {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        function proceedToCheckout() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (cart.length === 0) {
+                alert('Your cart is empty. Please add items to your cart before proceeding to checkout.');
+                return;
+            }
+            window.location.href = 'pedido.html';
+        }
+
+        function setupNavbar() {
+            const navbarToggle = document.getElementById('navbarToggle');
+            const navbarMenu = document.getElementById('navbarMenu');
+
+            navbarToggle.addEventListener('click', () => {
+                navbarMenu.classList.toggle('active');
+                navbarToggle.classList.toggle('active');
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    navbarMenu.classList.remove('active');
+                    navbarToggle.classList.remove('active');
+                });
+            });
+
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
