@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Li Doces e Salgados - Gallery Products</title>
+     <link rel="icon" type="image/png" href="logo.jpg">
+    <style>
+        :root {
+            --primary-color: #ff6f61;
+            --secondary-color: #ffa07a;
+            --text-color: #333;
+            --light-text: #fff;
+            --background: #fffaf0;
+            --card-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            --hover-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background);
+            padding: 20px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 20px;
+        }
+
+        .navbar-brand a {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar-menu {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .navbar-menu li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-menu li a:hover {
+            color: var(--primary-color);
+        }
+
+        .navbar-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .navbar-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-menu li a.active {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-toggle {
+                display: flex;
+            }
+
+            .navbar-menu {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background-color: white;
+                box-shadow: var(--card-shadow);
+                padding: 20px;
+                border-radius: 0 0 10px 10px;
+                z-index: 1000;
+            }
+
+            .navbar-menu.active {
+                display: flex;
+            }
+
+            .navbar-menu li {
+                margin: 10px 0;
+            }
+
+            .navbar-toggle.active span:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 5px);
+            }
+
+            .navbar-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .navbar-toggle.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(7px, -7px);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .gallery-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .gallery-filter {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 15px;
+        }
+
+        .gallery-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            aspect-ratio: 4/3;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-card:hover .gallery-img {
+            transform: scale(1.1);
+        }
+
+        .card-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: var(--light-text);
+            padding: 20px 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-card:hover .card-caption {
+            opacity: 1;
+        }
+
+        .card-caption h3 {
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        .card-caption p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .card-price {
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .card-action {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .card-action:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Lightbox Styles */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            overflow: auto;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .lightbox-content {
+            position: relative;
+            margin: auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: var(--light-text);
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox-close:hover {
+            color: var(--primary-color);
+            transform: scale(1.2);
+        }
+
+        .lightbox-nav {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            padding: 0 20px;
+        }
+
+        .lightbox-prev, .lightbox-next {
+            cursor: pointer;
+            color: var(--light-text);
+            font-size: 35px;
+            font-weight: bold;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            user-select: none;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+
+        .lightbox-prev:hover, .lightbox-next:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: var(--primary-color);
+            opacity: 1;
+        }
+
+        .lightbox-info {
+            color: var(--light-text);
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .lightbox-title {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+
+        .lightbox-desc {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .lightbox-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .lightbox-action {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox-action:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .lightbox-counter {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        /* Gallery CTA */
+        .gallery-cta {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .gallery-cta .cta-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .gallery-cta .cta-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 40px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 0;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+            
+            .lightbox-content {
+                width: 95%;
+                padding: 10px;
+            }
+            
+            .lightbox-close {
+                top: 20px;
+                right: 25px;
+                font-size: 30px;
+            }
+            
+            .lightbox-prev, .lightbox-next {
+                font-size: 28px;
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .lightbox-img {
+                max-height: 60vh;
+            }
+            
+            .lightbox-info {
+                padding: 15px;
+            }
+            
+            .lightbox-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="principal.en.html">Li Doces e Salgados</a>
+        </div>
+        <div class="navbar-toggle" id="navbarToggle" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="navbar-menu" id="navbarMenu">
+            <li><a href="principal.en.html" class="nav-link">Home</a></li>
+            <li><a href="products.html" class="nav-link">Products</a></li>
+            <li><a href="Carrinho.html" class="nav-link">Place Order</a></li>
+            <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+            <li><a href="produtos.html" class="nav-link">PT</a></li>
+        </ul>
+    </nav>
+
+    <div class="header">
+        <h1>Li Doces e Salgados</h1>
+        <p>Discover our delicious treats!</p>
+    </div>
+
+    <div class="gallery-container">
+        <div class="gallery-filter">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="salgados">Savory</button>
+            <button class="filter-btn" data-filter="doces">Sweet</button>
+        </div>
+
+        <div class="gallery-grid" id="gallery"></div>
+
+        <div class="gallery-cta">
+            <a href="orders.html" class="cta-button">Place Order Now</a>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal">
+        <span class="lightbox-close" onclick="closeLightbox()">×</span>
+        <div class="lightbox-nav">
+            <a class="lightbox-prev" onclick="navigateSlide(-1)">❮</a>
+            <a class="lightbox-next" onclick="navigateSlide(1)">❯</a>
+        </div>
+        <div class="lightbox-content">
+            <img class="lightbox-img" id="lightboxImage">
+            <div class="lightbox-info">
+                <h3 class="lightbox-title" id="lightboxTitle"></h3>
+                <p class="lightbox-desc" id="lightboxDesc"></p>
+                <p class="lightbox-price" id="lightboxPrice"></p>
+                <a href="#" class="lightbox-action" id="lightboxAction">Add to Order</a>
+                <div class="lightbox-counter" id="lightboxCounter"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Li Doces e Salgados - All rights reserved.</p>
+    </footer>
+
+   <script>
+        // Array com os produtos (imagens e descrições)
+        const galleryImages = [
+            // Salgados
+            { 
+                src: 'coxinhadefrango.jpg', // link da primeira imagem
+                title: 'Coxinha de Frango', 
+                description: 'delicious coxinha filled with shredded chicken.', 
+                category: 'salgados',
+                featured: true
+            },       
+            { 
+                src: 'images/salgados/rissoiscarne.jpg', // link da segunda imagem
+                title: 'Rissois de Carne',
+                description: 'crispy rissois filled with minced meat.', 
+                category: 'salgados',
+                featured: true
+            },
+            { 
+                src: 'bolinhadequeijo.jpg', // link da terceira imagem
+                title: 'Bolinha de Queijo',
+                description: 'fried cheese ball, crispy on the outside and melted on the inside.', 
+                category: 'salgados',
+                featured: true
+            },
+            { 
+                src: 'images/salgados/rissoisfrango.jpg', // link da quarta imagem
+                title: 'Rissois de Frango',
+                description: 'crispy rissois filled with chicken.',
+                category: 'salgados',
+                featured: true
+            },
+
+            // Doces
+            { 
+                src: 'brigadeiro.jpg', // link da quinta imagem
+                title: 'Brigadeiro', 
+                description: 'traditional chocolate truffles, perfect for any party.', 
+                category: 'doces',
+                featured: true
+            },
+            { 
+                src: 'beijinho.jpg', // link da sexta imagem
+                title: 'Beijinho', 
+                description: 'coconut truffles rolled in grated coconut.', 
+                category: 'doces',
+                featured: true
+            },
+            { 
+                src: 'leiteninho.jpeg', // link da sétima imagem
+                title: 'Leite Ninho',
+                description: 'sweet milk powder truffles with a creamy texture.', 
+                category: 'doces',
+                featured: true
+            },
+            {
+            src: 'brigadeirodenesquik.jpg', // link da oitava imagem
+                title: 'Brigadeiro de Nesquik',
+                description: 'Nesquik strawberry truffles.',
+                category: 'doces',
+                featured: true
+            }
+        ];
+
+        // Variáveis globais
+        let currentSlideIndex = 0;
+        let filteredImages = [...galleryImages];
+
+        // Inicializa a galeria quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            initGallery();
+            setupFilterButtons();
+            setupNavbar();
+        });
+
+        // Cria a galeria dinamicamente
+        function initGallery() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+            
+            filteredImages.forEach((image, index) => {
+                const card = document.createElement('div');
+                card.className = `gallery-card ${image.category}`;
+                
+                const img = document.createElement('img');
+                img.src = image.src;
+                img.alt = image.title;
+                img.className = 'gallery-img';
+                img.loading = 'lazy';
+                img.onerror = function() { this.src = 'placeholder.jpg'; };
+                img.onclick = () => openLightbox(index);
+                
+                const caption = document.createElement('div');
+                caption.className = 'card-caption';
+                caption.innerHTML = `
+                    <h3>${image.title}</h3>
+                    <p>${image.description}</p>
+                    <p class="card-price">€${image.price}</p>
+                    <a href="pedido.html?product=${encodeURIComponent(image.title)}" class="card-action">Add to Order</a>
+                `;
+                
+                card.appendChild(img);
+                card.appendChild(caption);
+                gallery.appendChild(card);
+            });
+        }
+
+        // Configura os botões de filtro
+        function setupFilterButtons() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filter = this.dataset.filter;
+                    
+                    if (filter === 'all') {
+                        filteredImages = [...galleryImages];
+                    } else {
+                        filteredImages = galleryImages.filter(img => img.category === filter);
+                    }
+                    
+                    initGallery();
+                });
+            });
+        }
+
+        // Abre o lightbox
+        function openLightbox(index) {
+            currentSlideIndex = index;
+            updateLightbox();
+            document.getElementById('lightboxModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            document.addEventListener('keydown', handleKeyPress);
+        }
+
+        // Fecha o lightbox
+        function closeLightbox() {
+            document.getElementById('lightboxModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.removeEventListener('keydown', handleKeyPress);
+        }
+
+        // Navega entre slides
+        function navigateSlide(n) {
+            currentSlideIndex += n;
+            
+            if (currentSlideIndex >= filteredImages.length) {
+                currentSlideIndex = 0;
+            } else if (currentSlideIndex < 0) {
+                currentSlideIndex = filteredImages.length - 1;
+            }
+            
+            updateLightbox();
+        }
+
+        // Atualiza o conteúdo do lightbox
+        function updateLightbox() {
+            const image = filteredImages[currentSlideIndex];
+            const lightboxImg = document.getElementById('lightboxImage');
+            const title = document.getElementById('lightboxTitle');
+            const desc = document.getElementById('lightboxDesc');
+            const price = document.getElementById('lightboxPrice');
+            const action = document.getElementById('lightboxAction');
+            const counter = document.getElementById('lightboxCounter');
+            
+            lightboxImg.src = '';
+            lightboxImg.alt = image.title;
+            lightboxImg.style.opacity = 0;
+            
+            const img = new Image();
+            img.src = image.src;
+            img.onload = function() {
+                lightboxImg.src = this.src;
+                lightboxImg.style.opacity = 1;
+            };
+            img.onerror = function() {
+                lightboxImg.src = 'placeholder.jpg';
+                lightboxImg.style.opacity = 1;
+            };
+            
+            title.textContent = image.title;
+            desc.textContent = image.description;
+            price.textContent = `€${image.price}`;
+            action.href = `pedido.html?product=${encodeURIComponent(image.title)}`;
+            counter.textContent = `Produto ${currentSlideIndex + 1} de ${filteredImages.length}`;
+            
+            preloadAdjacentImages();
+        }
+
+        // Pré-carrega as imagens adjacentes
+        function preloadAdjacentImages() {
+            const prevIndex = currentSlideIndex - 1 >= 0 ? currentSlideIndex - 1 : filteredImages.length - 1;
+            const nextIndex = currentSlideIndex + 1 < filteredImages.length ? currentSlideIndex + 1 : 0;
+            
+            new Image().src = filteredImages[prevIndex].src;
+            new Image().src = filteredImages[nextIndex].src;
+        }
+
+        // Manipula eventos de teclado
+        function handleKeyPress(e) {
+            switch(e.key) {
+                case 'Escape':
+                    closeLightbox();
+                    break;
+                case 'ArrowLeft':
+                    navigateSlide(-1);
+                    break;
+                case 'ArrowRight':
+                    navigateSlide(1);
+                    break;
+            }
+        }
+
+        // Fecha o modal ao clicar fora da imagem
+        document.getElementById('lightboxModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLightbox();
+            }
+        });
+
+        // Fecha o modal ao pressionar o botão voltar no navegador
+        window.addEventListener('popstate', function() {
+            if (document.getElementById('lightboxModal').style.display === 'block') {
+                closeLightbox();
+            }
+        });
+
+        // Manipula o menu hamburguer
+        function setupNavbar() {
+            const navbarToggle = document.getElementById('navbarToggle');
+            const navbarMenu = document.getElementById('navbarMenu');
+
+            navbarToggle.addEventListener('click', () => {
+                navbarMenu.classList.toggle('active');
+                navbarToggle.classList.toggle('active');
+            });
+
+            // Fecha o menu ao clicar em um link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    navbarMenu.classList.remove('active');
+                    navbarToggle.classList.remove('active');
+                });
+            });
+
+            // Define a página ativa
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
